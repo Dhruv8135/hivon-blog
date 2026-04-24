@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useState } from "react";
 
-export default function SearchBar() {
+function SearchBarClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [value, setValue] = useState(searchParams.get("q") ?? "");
@@ -25,5 +26,13 @@ export default function SearchBar() {
         router.replace(url.pathname + url.search);
       }}
     />
+  );
+}
+
+export default function SearchBar() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchBarClient />
+    </Suspense>
   );
 }
