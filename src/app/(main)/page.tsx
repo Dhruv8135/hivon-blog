@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
-import type { ReactNode } from "react";
 import { createClient } from "@/lib/supabase/server";
 
 const PAGE_SIZE = 6;
@@ -65,46 +64,89 @@ export default async function MainHomePage({
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 py-10">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight">Hivon Blog</h1>
-            <p className="mt-1 text-sm text-zinc-600">Stories, updates, and ideas.</p>
-          </div>
+    <div className="min-h-[calc(100vh-4rem)] bg-[#070A12] text-white">
+      <section className="border-b border-white/10">
+        <div className="bg-linear-to-b from-indigo-950/60 via-[#070A12] to-[#070A12]">
+          <div className="mx-auto w-full max-w-6xl px-6 py-14">
+            <div className="flex flex-col gap-8">
+              <div>
+                <h1 className="mt-4 text-5xl font-semibold tracking-tight sm:text-6xl">Blog</h1>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-white/70">
+                  Stories, ideas, and deep dives — with a clean, modern reading experience.
+                </p>
+              </div>
 
-          <div className="flex items-center gap-3">
-            <form action="/" method="GET" className="flex items-center gap-2">
-              <input
-                name="q"
-                defaultValue={q}
-                placeholder="Search posts by title..."
-                className="h-10 w-72 rounded-md border bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-zinc-200"
-              />
-              <ButtonLike>Search</ButtonLike>
-            </form>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <form action="/" method="GET" className="flex w-full items-center gap-2 sm:max-w-xl">
+                  <div className="flex h-11 flex-1 items-center rounded-md border border-white/10 bg-white/5 px-3">
+                    <input
+                      name="q"
+                      defaultValue={q}
+                      placeholder="Search posts by title..."
+                      className="h-full w-full bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="inline-flex h-11 items-center justify-center rounded-md bg-linear-to-r from-violet-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-sm hover:from-violet-500 hover:to-indigo-500"
+                  >
+                    Search
+                  </button>
+                </form>
 
-            {user && (
-              <Link
-                href="/posts/new"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
-              >
-                Create Post
-              </Link>
-            )}
+                {user && (
+                  <Link
+                    href="/posts/new"
+                    className="inline-flex h-11 items-center justify-center rounded-md border border-white/10 bg-white/5 px-4 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    Create Post
+                  </Link>
+                )}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between text-sm text-white/70">
+                  <span>
+                    Page <span className="text-white">{page}</span> of <span className="text-white">{totalPages}</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={buildUrl(page - 1)}
+                      aria-disabled={page <= 1}
+                      className={`inline-flex h-10 items-center justify-center rounded-md border border-white/10 px-4 text-sm ${
+                        page <= 1 ? "pointer-events-none opacity-40" : "hover:bg-white/5"
+                      }`}
+                    >
+                      Prev
+                    </Link>
+                    <Link
+                      href={buildUrl(page + 1)}
+                      aria-disabled={page >= totalPages}
+                      className={`inline-flex h-10 items-center justify-center rounded-md border border-white/10 px-4 text-sm ${
+                        page >= totalPages ? "pointer-events-none opacity-40" : "hover:bg-white/5"
+                      }`}
+                    >
+                      Next
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+      </section>
 
+      <main className="mx-auto w-full max-w-6xl px-6 py-10">
         {error && (
-          <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-md border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             {error.message}
           </div>
         )}
 
         {!error && (!posts || posts.length === 0) ? (
-          <div className="rounded-xl border bg-white p-10 text-center">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center">
             <h2 className="text-lg font-semibold">No posts yet</h2>
-            <p className="mt-2 text-sm text-zinc-600">Be the first to write something.</p>
+            <p className="mt-2 text-sm text-white/60">Be the first to write something.</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -118,34 +160,41 @@ export default async function MainHomePage({
               return (
                 <article
                   key={row.id}
-                  className="group overflow-hidden rounded-xl border bg-white shadow-sm transition hover:shadow-md"
+                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition hover:bg-white/10"
                 >
                   <Link href={`/posts/${row.id}`} className="block">
-                    <div className="relative h-44 w-full bg-zinc-100">
+                    <div className="relative h-48 w-full bg-white/5">
                       {imageUrl ? (
-                        <Image
-                          src={imageUrl}
-                          alt={row.title || "Post image"}
-                          fill
-                          className="object-cover transition group-hover:scale-[1.02]"
-                        />
+                        <>
+                          <Image
+                            src={imageUrl}
+                            alt={row.title || "Post image"}
+                            fill
+                            className="object-cover transition duration-300 group-hover:scale-[1.02]"
+                          />
+                          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-black/0 to-black/0" />
+                        </>
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-sm text-zinc-500">
-                          No image
-                        </div>
+                        <div className="flex h-full w-full items-center justify-center text-sm text-white/50">No image</div>
                       )}
                     </div>
-                    <div className="flex flex-col gap-2 p-5">
-                      <h2 className="line-clamp-2 text-lg font-semibold leading-6 tracking-tight">
-                        {row.title}
-                      </h2>
-                      <div className="flex items-center gap-2 text-xs text-zinc-500">
-                        <span>{authorName}</span>
+
+                    <div className="flex flex-col gap-3 p-5">
+                      <div className="flex items-center gap-2 text-xs text-white/60">
+                        <span className="text-white/80">{authorName}</span>
                         <span aria-hidden="true">•</span>
                         <span>{createdAt ? format(createdAt, "MMM d, yyyy") : ""}</span>
                       </div>
-                      <p className="text-sm leading-6 text-zinc-700">{truncate(summary, 150)}</p>
-                      <div className="pt-1 text-sm font-medium text-zinc-900 group-hover:underline">Read more</div>
+
+                      <h2 className="line-clamp-2 text-lg font-semibold leading-6 tracking-tight">
+                        {row.title}
+                      </h2>
+
+                      <p className="line-clamp-3 text-sm leading-6 text-white/70">{truncate(summary, 160)}</p>
+
+                      <div className="pt-1 text-sm font-semibold text-violet-200 group-hover:text-violet-100">
+                        Read article
+                      </div>
                     </div>
                   </Link>
                 </article>
@@ -155,44 +204,33 @@ export default async function MainHomePage({
         )}
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between pt-2">
+          <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
             <Link
               href={buildUrl(page - 1)}
               aria-disabled={page <= 1}
-              className={`inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm ${
-                page <= 1 ? "pointer-events-none opacity-50" : "hover:bg-zinc-50"
+              className={`inline-flex h-11 items-center justify-center rounded-md border border-white/10 px-4 text-sm ${
+                page <= 1 ? "pointer-events-none opacity-40" : "hover:bg-white/5"
               }`}
             >
               Prev
             </Link>
 
-            <div className="text-sm text-zinc-600">
-              Page {page} of {totalPages}
+            <div className="text-sm text-white/70">
+              Page <span className="text-white">{page}</span> of <span className="text-white">{totalPages}</span>
             </div>
 
             <Link
               href={buildUrl(page + 1)}
               aria-disabled={page >= totalPages}
-              className={`inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm ${
-                page >= totalPages ? "pointer-events-none opacity-50" : "hover:bg-zinc-50"
+              className={`inline-flex h-11 items-center justify-center rounded-md border border-white/10 px-4 text-sm ${
+                page >= totalPages ? "pointer-events-none opacity-40" : "hover:bg-white/5"
               }`}
             >
               Next
             </Link>
           </div>
         )}
-      </div>
+      </main>
     </div>
-  );
-}
-
-function ButtonLike({ children }: { children: ReactNode }) {
-  return (
-    <button
-      type="submit"
-      className="inline-flex h-10 items-center justify-center rounded-md border bg-white px-4 text-sm font-medium hover:bg-zinc-50"
-    >
-      {children}
-    </button>
   );
 }

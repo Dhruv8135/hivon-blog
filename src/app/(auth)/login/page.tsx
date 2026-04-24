@@ -48,46 +48,50 @@ function LoginPageClient() {
   };
 
   return (
-    <div className="flex flex-1 items-center justify-center p-6">
-      <div className="w-full max-w-md rounded-lg border bg-white p-6">
-        <h1 className="text-xl font-semibold">Login</h1>
-        <p className="mt-2 text-sm text-zinc-600">Welcome back.</p>
+    <div className="flex flex-1 items-center justify-center bg-[#0a0a1a] px-6 py-14 text-white">
+      <div className="w-full max-w-md rounded-2xl border border-violet-500/30 bg-[#12122a] p-8 shadow-xl shadow-black/30">
+        <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
+        <p className="mt-2 text-sm text-white/60">Welcome back. Continue writing and reading.</p>
 
-        <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Email</span>
+        <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-white/90">Email</span>
             <input
-              className="rounded-md border px-3 py-2"
+              className="h-11 rounded-md border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20"
               autoComplete="email"
               inputMode="email"
               placeholder="you@example.com"
               {...register("email")}
             />
-            {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
+            {errors.email && <span className="text-sm text-red-300">{errors.email.message}</span>}
           </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Password</span>
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-white/90">Password</span>
             <input
-              className="rounded-md border px-3 py-2"
+              className="h-11 rounded-md border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20"
               type="password"
               autoComplete="current-password"
               placeholder="••••••••"
               {...register("password")}
             />
-            {errors.password && <span className="text-sm text-red-600">{errors.password.message}</span>}
+            {errors.password && <span className="text-sm text-red-300">{errors.password.message}</span>}
           </label>
 
-          {formError && <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{formError}</div>}
+          {formError && (
+            <div className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+              {formError}
+            </div>
+          )}
 
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="h-11 bg-linear-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500">
             {isSubmitting ? "Signing in..." : "Login"}
           </Button>
         </form>
 
-        <div className="mt-6 text-sm text-zinc-600">
+        <div className="mt-6 text-sm text-white/60">
           Don&apos;t have an account?{" "}
-          <Link className="underline" href="/signup">
+          <Link className="font-medium text-violet-300 hover:text-violet-200 hover:underline" href="/signup">
             Sign up
           </Link>
         </div>
